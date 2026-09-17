@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F TRON AC - Servis & Maintenance Mesin Pendingin Terpercaya</title>
+  <meta name="description" content="Layanan servis AC, kulkas, freezer, chiller, dan cold room profesional bergaransi 30 hari. Teknisi certified BNSP, respon cepat 24/7." />
+  
+  <!-- Fonts & Styling -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 300: '#7dd3fc',
+              400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1',
+              800: '#075985', 900: '#0c4a6e', 950: '#082f49',
+            },
+            navy: {
+              800: '#0f172a', 900: '#090d16', 950: '#030712',
+            }
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Canvas Confetti & Lucide Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- React 18 & Babel CDN for standalone rendering -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    .dark .glass-effect {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+    .dark .glass-card {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 50%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .dark .gradient-text {
+      background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 50%, #60a5fa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-navy-950 dark:text-slate-100 antialiased selection:bg-brand-500 selection:text-white transition-colors duration-300">
+  
+  <div id="root"></div>
+
+  <!-- Connected React App Script -->
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // Helper to format currency
+    const formatRupiah = (num) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num);
+
+    function App() {
+      const [isDark, setIsDark] = useState(() => localStorage.getItem('theme') === 'dark');
+      const [bookingModal, setBookingModal] = useState(false);
+      const [selectedServiceId, setSelectedServiceId] = useState(1);
+      const [trackerModal, setTrackerModal] = useState(false);
+
+      useEffect(() => {
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+          localStorage.setItem('theme', 'dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+          localStorage.setItem('theme', 'light');
+        }
+      }, [isDark]);
+
+      useEffect(() => {
+        lucide.createIcons();
+      });
+
+      const openBooking = (id = 1) => {
+        setSelectedServiceId(id);
+        setBookingModal(true);
+      };
+
+      return (
+        <div className="min-h-screen flex flex-col font-sans">
+          
+          {/* NAVBAR */}
+          <header className="fixed top-0 left-0 right-0 z-50 glass-effect py-3 shadow-md">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+              <a href="#beranda" className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center text-white shadow-md">
+                  <i data-lucide="snowflake" className="w-6 h-6"></i>
+                </div>
+                <div>
+                  <span className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                    F TRON <span className="text-brand-500">AC</span>
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block -mt-1 uppercase">Servis & Maintenance</span>
+                </div>
+              </a>
+
+              <nav className="hidden md:flex items-center gap-1 bg-slate-100/80 dark:bg-slate-800/60 p-1.5 rounded-full border border-slate-200/50 dark:border-slate-700/50">
+                <a href="#beranda" className="px-4 py-1.5 text-xs font-semibold hover:text-brand-500">Beranda</a>
+                <a href="#layanan" className="px-4 py-1.5 text-xs font-semibold hover:text-brand-500">Layanan</a>
+                <a href="#estimator" className="px-4 py-1.5 text-xs font-semibold hover:text-brand-500">Estimator Biaya</a>
+                <a href="#tentang-kami" className="px-4 py-1.5 text-xs font-semibold hover:text-brand-500">Tentang Kami</a>
+                <a href="#testimoni" className="px-4 py-1.5 text-xs font-semibold hover:text-brand-500">Testimoni</a>
+                <a href="#faq" className="px-4 py-1.5 text-xs font-semibold hover:text-brand-500">FAQ</a>
+                <a href="#kontak" className="px-4 py-1.5 text-xs font-semibold hover:text-brand-500">Kontak</a>
+              </nav>
+
+              <div className="flex items-center gap-3">
+                <button onClick={() => setTrackerModal(true)} className="px-3.5 py-2 text-xs font-bold bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-2">
+                  <i data-lucide="search" className="w-4 h-4 text-brand-500"></i>
+                  <span>Cek Status</span>
+                </button>
+
+                <button onClick={() => setIsDark(!isDark)} className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800">
+                  <i data-lucide={isDark ? "sun" : "moon"} className="w-4 h-4 text-amber-400"></i>
+                </button>
+
+                <button onClick={() => openBooking(1)} className="px-5 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-brand-600 to-brand-500 rounded-xl shadow-md">
+                  Pesan Servis
+                </button>
+              </div>
+            </div>
+          </header>
+
+          {/* HERO SECTION */}
+          <section id="beranda" className="pt-36 pb-20 md:pt-44 md:pb-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+              <div className="lg:col-span-7">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-300 text-xs font-bold mb-6">
+                  <i data-lucide="snowflake" className="w-4 h-4 text-brand-500"></i>
+                  Jasa Servis AC & Pendingin No. #1 Bergaransi
+                </div>
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white leading-tight mb-6">
+                  Solusi Sejuk & Cepat untuk <span className="gradient-text">Mesin Pendingin</span> Anda
+                </h1>
+                <p className="text-base text-slate-600 dark:text-slate-300 mb-8 max-w-2xl leading-relaxed">
+                  Layanan profesional servis AC, Kulkas, Freezer, Chiller, dan Cold Room. Teknisi berpengalaman bersertifikasi, transparan tanpa biaya tersembunyi & <strong>Garansi Resmi 30 Hari</strong>.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                  <button onClick={() => openBooking(1)} className="px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-600 to-brand-500 text-white font-bold shadow-xl shadow-brand-500/30 flex items-center justify-center gap-2">
+                    <i data-lucide="wrench" className="w-5 h-5"></i>
+                    <span>Pesan Servis Sekarang</span>
+                  </button>
+                  <button onClick={() => setTrackerModal(true)} className="px-7 py-4 rounded-2xl bg-white dark:bg-navy-800 border border-slate-200 dark:border-slate-700 font-bold flex items-center justify-center gap-2">
+                    <i data-lucide="search" className="w-5 h-5 text-brand-500"></i>
+                    <span>Cek Status Tiket</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="lg:col-span-5">
+                <div className="glass-card rounded-3xl p-7 shadow-2xl border border-white/40 dark:border-white/10">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-2xl bg-brand-500 text-white flex items-center justify-center shadow-lg">
+                        <i data-lucide="snowflake" className="w-7 h-7"></i>
+                      </div>
+                      <div>
+                        <h3 className="font-extrabold text-slate-900 dark:text-white text-base">F TRON AC Express</h3>
+                        <p className="text-xs text-brand-500 font-semibold">Tanggap Darurat 24/7</p>
+                      </div>
+                    </div>
+                    <span className="px-3 py-1 bg-emerald-500/10 text-emerald-600 text-xs font-bold rounded-full">Online</span>
+                  </div>
+
+                  <div className="space-y-3 mb-4">
+                    <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-800 flex justify-between items-center cursor-pointer" onClick={() => openBooking(1)}>
+                      <div className="text-left">
+                        <h4 className="text-xs font-bold">Cuci AC & Maintenance</h4>
+                        <p className="text-[11px] text-slate-500">Mulai Rp 75.000 / unit</p>
+                      </div>
+                      <span className="px-3 py-1 text-xs font-bold text-brand-500 bg-brand-50 dark:bg-brand-950 rounded-lg">Pesan</span>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-800 flex justify-between items-center cursor-pointer" onClick={() => openBooking(3)}>
+                      <div className="text-left">
+                        <h4 className="text-xs font-bold">Isi Freon Original</h4>
+                        <p className="text-[11px] text-slate-500">Mulai Rp 150.000</p>
+                      </div>
+                      <span className="px-3 py-1 text-xs font-bold text-brand-500 bg-brand-50 dark:bg-brand-950 rounded-lg">Pesan</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* SERVICES CATALOG */}
+          <ServicesSection openBooking={openBooking} />
+
+          {/* COST ESTIMATOR */}
+          <CostEstimator openBooking={openBooking} />
+
+          {/* ABOUT US */}
+          <AboutSection />
+
+          {/* TESTIMONIALS */}
+          <TestimonialsSection />
+
+          {/* FAQ */}
+          <FaqSection />
+
+          {/* CONTACT */}
+          <ContactSection />
+
+          {/* FLOATING WHATSAPP */}
+          <a href="https://wa.me/6281299887766?text=Halo%20F%20TRON%20AC,%20saya%20ingin%20pesan%20servis" target="_blank" className="fixed bottom-6 right-6 z-40 bg-emerald-500 hover:bg-emerald-600 text-white p-4 rounded-full shadow-2xl flex items-center gap-3 font-bold text-xs">
+            <i data-lucide="message-square" className="w-5 h-5"></i>
+            <span className="hidden sm:inline">WhatsApp 24/7</span>
+          </a>
+
+          {/* FOOTER */}
+          <footer className="bg-slate-900 text-slate-400 py-12 mt-auto text-xs text-center border-t border-slate-800">
+            <div className="max-w-7xl mx-auto px-4">
+              <p>© {new Date().getFullYear()} F TRON AC. Layanan Servis Mesin Pendingin Bergaransi Resmi 30 Hari.</p>
+            </div>
+          </footer>
+
+          {/* MODALS */}
+          {bookingModal && <BookingModal isOpen={bookingModal} onClose={() => setBookingModal(false)} initialServiceId={selectedServiceId} />}
+          {trackerModal && <OrderTrackerModal isOpen={trackerModal} onClose={() => setTrackerModal(false)} />}
+        </div>
+      );
+    }
+
+    // Services Catalog Component connected to ElysiaJS API
+    function ServicesSection({ openBooking }) {
+      const [services, setServices] = useState([]);
+
+      useEffect(() => {
+        fetch('/api/services')
+          .then(r => r.json())
+          .then(d => d.success && setServices(d.data))
+          .catch(e => console.error(e));
+      }, []);
+
+      return (
+        <section id="layanan" className="py-20 bg-slate-100/60 dark:bg-navy-900/60">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <span className="text-xs font-bold uppercase tracking-wider text-brand-500 bg-brand-500/10 px-3 py-1 rounded-full">Katalog Layanan</span>
+              <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-3">Layanan Servis Mesin Pendingin</h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {services.map(s => (
+                <div key={s.id} className="glass-card rounded-2xl p-6 flex flex-col justify-between hover:shadow-xl transition-all border border-slate-200 dark:border-slate-800">
+                  <div>
+                    <span className="text-[11px] font-bold text-slate-400 uppercase">{s.category}</span>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mt-1 mb-2">{s.title}</h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-6">{s.description}</p>
+                  </div>
+                  <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">Mulai Dari</span>
+                      <span className="text-lg font-extrabold text-brand-500">{formatRupiah(s.priceBase)}</span>
+                    </div>
+                    <button onClick={() => openBooking(s.id)} className="px-4 py-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs rounded-xl hover:bg-brand-500">
+                      Pesan
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    // Cost Estimator Component
+    function CostEstimator({ openBooking }) {
+      const [serviceId, setServiceId] = useState(1);
+      const [unitCount, setUnitCount] = useState(1);
+      const [hasFreon, setHasFreon] = useState(false);
+
+      const prices = { 1: 75000, 2: 250000, 3: 150000, 4: 180000, 5: 500000, 6: 220000 };
+      const total = (prices[serviceId] || 75000) * unitCount + (hasFreon ? 100000 * unitCount : 0);
+
+      return (
+        <section id="estimator" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="glass-card rounded-3xl p-8 border border-slate-200 dark:border-slate-800">
+            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white mb-4">Kalkulator Estimasi Biaya Servis</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+              <div>
+                <label className="block text-xs font-bold mb-2">Jumlah Unit AC/Mesin</label>
+                <input type="number" min="1" max="10" value={unitCount} onChange={e => setUnitCount(Number(e.target.value))} className="w-full p-3 rounded-xl border dark:bg-navy-900 font-bold" />
+              </div>
+              <div>
+                <label className="flex items-center gap-2 text-xs font-bold cursor-pointer">
+                  <input type="checkbox" checked={hasFreon} onChange={e => setHasFreon(e.target.checked)} className="w-4 h-4 text-brand-500" />
+                  <span>Isi Freon Murni (+Rp 100.000/unit)</span>
+                </label>
+              </div>
+              <div className="bg-brand-500/10 p-5 rounded-2xl border border-brand-500/20 text-center">
+                <span className="text-xs text-slate-500 block">Estimasi Total Biaya</span>
+                <span className="text-3xl font-black text-brand-500">{formatRupiah(total)}</span>
+                <button onClick={() => openBooking(serviceId)} className="w-full mt-3 py-2.5 bg-brand-500 text-white font-bold text-xs rounded-xl shadow-md">Pesan Sekarang</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    // About Section
+    function AboutSection() {
+      return (
+        <section id="tentang-kami" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <span className="text-xs font-bold uppercase tracking-wider text-brand-500 bg-brand-500/10 px-3 py-1 rounded-full">Tentang F TRON AC</span>
+            <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-3">Teknisi Certified & Garansi Resmi 30 Hari</h2>
+            <p className="text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">Penyedia jasa perbaikan mesin pendingin terpercaya sejak 2018 dengan respon cepat dan pengerjaan higienis.</p>
+          </div>
+        </section>
+      );
+    }
+
+    // Testimonials Section connected to API
+    function TestimonialsSection() {
+      const [list, setList] = useState([]);
+      useEffect(() => {
+        fetch('/api/testimonials').then(r => r.json()).then(d => d.success && setList(d.data));
+      }, []);
+
+      return (
+        <section id="testimoni" className="py-20 bg-slate-100/60 dark:bg-navy-900/60">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white text-center mb-8">Testimoni Pelanggan</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {list.map(t => (
+                <div key={t.id} className="glass-card p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+                  <p className="text-xs italic text-slate-600 dark:text-slate-300 mb-4">"{t.comment}"</p>
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">{t.name}</h4>
+                  <span className="text-[11px] text-brand-500">{t.role}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    // FAQ Section connected to API
+    function FaqSection() {
+      const [faqs, setFaqs] = useState([]);
+      useEffect(() => {
+        fetch('/api/faqs').then(r => r.json()).then(d => d.success && setFaqs(d.data));
+      }, []);
+
+      return (
+        <section id="faq" className="py-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white text-center mb-8">Pertanyaan Umum (FAQ)</h2>
+          <div className="space-y-4">
+            {faqs.map(f => (
+              <div key={f.id} className="glass-card p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-1">❓ {f.question}</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{f.answer}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+    }
+
+    // Contact Section connected to API
+    function ContactSection() {
+      const [msg, setMsg] = useState({ name: '', phone: '', message: '' });
+      const [sent, setSent] = useState(false);
+
+      const submit = async (e) => {
+        e.preventDefault();
+        const res = await fetch('/api/contacts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(msg) });
+        const d = await res.json();
+        if (d.success) setSent(true);
+      };
+
+      return (
+        <section id="kontak" className="py-20 bg-slate-100/60 dark:bg-navy-900/60">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white text-center mb-8">Form Kontak & Lokasi</h2>
+            {sent && <div className="p-4 bg-emerald-500/10 text-emerald-600 text-xs font-bold rounded-xl mb-4 text-center">Pesan Anda berhasil terkirim!</div>}
+            <form onSubmit={submit} className="glass-card p-6 rounded-2xl space-y-4 border border-slate-200 dark:border-slate-800">
+              <input required placeholder="Nama Anda" value={msg.name} onChange={e => setMsg({...msg, name: e.target.value})} className="w-full p-3 rounded-xl border dark:bg-navy-900 text-xs font-semibold" />
+              <input required placeholder="Nomor WhatsApp/HP" value={msg.phone} onChange={e => setMsg({...msg, phone: e.target.value})} className="w-full p-3 rounded-xl border dark:bg-navy-900 text-xs font-semibold" />
+              <textarea required rows="3" placeholder="Pesan / Keluhan Mesin Pendingin" value={msg.message} onChange={e => setMsg({...msg, message: e.target.value})} className="w-full p-3 rounded-xl border dark:bg-navy-900 text-xs font-semibold" />
+              <button type="submit" className="w-full py-3 bg-brand-500 text-white font-bold text-xs rounded-xl shadow-md">Kirim Pesan</button>
+            </form>
+          </div>
+        </section>
+      );
+    }
+
+    // Booking Modal Connected to API
+    function BookingModal({ isOpen, onClose, initialServiceId }) {
+      const [name, setName] = useState('');
+      const [phone, setPhone] = useState('');
+      const [address, setAddress] = useState('');
+      const [ticket, setTicket] = useState(null);
+
+      const handleBooking = async (e) => {
+        e.preventDefault();
+        const res = await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ customerName: name, customerPhone: phone, customerAddress: address, serviceId: initialServiceId, unitCount: 1, bookingDate: new Date().toISOString() })
+        });
+        const d = await res.json();
+        if (d.success) {
+          setTicket(d.data.ticketCode);
+          confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+        }
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
+          <div className="glass-card w-full max-w-md rounded-3xl p-6 relative border border-white/40 shadow-2xl">
+            <button onClick={onClose} className="absolute top-4 right-4 p-2 rounded-xl text-slate-400">✕</button>
+            {!ticket ? (
+              <form onSubmit={handleBooking} className="space-y-4">
+                <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">Form Booking Servis Online</h3>
+                <input required placeholder="Nama Lengkap" value={name} onChange={e => setName(e.target.value)} className="w-full p-3 rounded-xl border dark:bg-navy-900 text-xs" />
+                <input required placeholder="No. WhatsApp / HP" value={phone} onChange={e => setPhone(e.target.value)} className="w-full p-3 rounded-xl border dark:bg-navy-900 text-xs" />
+                <textarea required placeholder="Alamat Pengerjaan" value={address} onChange={e => setAddress(e.target.value)} className="w-full p-3 rounded-xl border dark:bg-navy-900 text-xs" />
+                <button type="submit" className="w-full py-3 bg-brand-500 text-white font-bold text-xs rounded-xl shadow-md">Konfirmasi Booking</button>
+              </form>
+            ) : (
+              <div className="text-center py-4">
+                <h3 className="text-xl font-extrabold text-emerald-500 mb-2">Booking Berhasil!</h3>
+                <p className="text-xs text-slate-500 mb-4">Kode Tiket Servis Anda:</p>
+                <div className="text-3xl font-black text-brand-500 tracking-wider mb-6 bg-slate-100 dark:bg-navy-900 p-4 rounded-2xl">{ticket}</div>
+                <button onClick={onClose} className="w-full py-3 bg-slate-900 text-white font-bold text-xs rounded-xl">Tutup</button>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // Order Tracker Modal Connected to API
+    function OrderTrackerModal({ isOpen, onClose }) {
+      const [code, setCode] = useState('');
+      const [res, setRes] = useState(null);
+      const [err, setErr] = useState('');
+
+      const track = async (e) => {
+        e.preventDefault();
+        setErr('');
+        const r = await fetch(`/api/bookings/track/${encodeURIComponent(code)}`);
+        const d = await r.json();
+        if (d.success) setRes(d.data); else setErr(d.message);
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
+          <div className="glass-card w-full max-w-md rounded-3xl p-6 relative border border-white/40 shadow-2xl">
+            <button onClick={onClose} className="absolute top-4 right-4 p-2 rounded-xl text-slate-400">✕</button>
+            <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mb-4">Cek Status Tiket Servis</h3>
+            <form onSubmit={track} className="flex gap-2 mb-4">
+              <input required placeholder="Kode Tiket (misal: AC-8921)" value={code} onChange={e => setCode(e.target.value)} className="flex-1 p-3 rounded-xl border dark:bg-navy-900 text-xs font-mono font-bold uppercase" />
+              <button type="submit" className="px-4 bg-brand-500 text-white font-bold text-xs rounded-xl">Cek</button>
+            </form>
+            {err && <div className="p-3 bg-rose-500/10 text-rose-500 text-xs rounded-xl">{err}</div>}
+            {res && (
+              <div className="p-4 bg-brand-500/10 rounded-2xl border border-brand-500/20 text-xs space-y-2">
+                <div className="font-bold text-sm text-brand-500">Status: {res.statusLabel}</div>
+                <div>Pelanggan: {res.booking.customerName}</div>
+                <div>Layanan: {res.booking.serviceName}</div>
+                <div className="text-[11px] text-slate-500">{res.statusDescription}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
